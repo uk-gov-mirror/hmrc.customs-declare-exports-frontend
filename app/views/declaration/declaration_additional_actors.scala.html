@@ -27,6 +27,7 @@
 @import views.html.components.gds.{errorSummary, gdsMainTemplate, _}
 @import views.{BackButton, Title}
 @import views.html.components.gds._
+@import forms.Choice
 @import forms.Choice.AllowedChoiceValues._
 @import views.components.gds.Styles._
 @import config.AppConfig
@@ -42,7 +43,7 @@ exportsInputText: exportsInputText,
 errorSummary: errorSummary,
 sectionHeader: sectionHeader,
 saveButtons: saveButtons,
-saveAndContinue: saveAndContinue,
+tariffDetails: tariffDetails,
 paragraph: paragraph,
 formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF,
 appConfig: AppConfig
@@ -50,6 +51,15 @@ appConfig: AppConfig
 
 
 @(mode: Mode, form: Form[DeclarationAdditionalActors], actors: Seq[DeclarationAdditionalActors])(implicit request: JourneyRequest[_], messages: Messages)
+
+@backCall = @{
+mode match {
+case Mode.Change => controllers.declaration.routes.SummaryController.displayPage(Mode.Normal)
+case Mode.ChangeAmend | Mode.Amend => controllers.declaration.routes.SummaryController.displayPage(Mode.Amend)
+case Mode.Draft => controllers.declaration.routes.SummaryController.displayPage(Mode.Draft)
+case Mode.Normal => controllers.routes.ChoiceController.displayPage(Some(Choice(CreateDec)))
+}
+}
 
 @tariffBody = { @Html(messages("declaration.type.additionalActorsSummaryText", components.details_content_link())) }
 
@@ -59,7 +69,7 @@ title = Title("supplementary.additionalActors.title","supplementary.summary.part
 backButton = Some(BackButton(messages("site.back"), Navigator.backLink(DeclarationAdditionalActors, mode)))
 ) {
 
-@formHelper(action = DeclarationAdditionalActorsController.saveForm(mode), 'autoComplete -> "off"){
+@formHelper(action = controllers.declaration.routes.DeclarationAdditionalActorsController.saveForm(mode), 'autoComplete -> "off"){
 @helper.CSRF.formField
 
 @components.error_summary(form.errors)
@@ -75,7 +85,7 @@ backButton = Some(BackButton(messages("site.back"), Navigator.backLink(Declarati
 
 
 @govukRadios(Radios(
-   name = "type",
+   name = "partyType",
    fieldset = Some(Fieldset(
    legend = Some(Legend(
    content = Text(messages("supplementary.additionalActors.partyType")),
@@ -86,11 +96,16 @@ backButton = Some(BackButton(messages("site.back"), Navigator.backLink(Declarati
 
 items = Seq(
   RadioItem(
-  id = Some(DeclarationType.STANDARD.toString),
-  value = Some(DeclarationType.STANDARD.toString),
-  content = Text(messages("supplementary.partyType.CS")),
-  checked = form("type").value.contains(DeclarationType.STANDARD.toString)
+  id = Some(s"supplementary.partyType.$Consolidator"),
+  value = Some(Consolidator),
+  content = Text(messages(s"supplementary.partyType.$Consolidator")),
+  checked = form("type").value.contains(Consolidator)
 ),
+
+<!--RadioOption(, , messages()),-->
+<!--RadioOption(s"supplementary.partyType.$Manufacturer", Manufacturer, messages(s"supplementary.partyType.$Manufacturer")),-->
+<!--RadioOption(s"supplementary.partyType.$FreightForwarder", FreightForwarder, messages(s"supplementary.partyType.$FreightForwarder")),-->
+<!--RadioOption(s"supplementary.partyType.$WarehouseKeeper", WarehouseKeeper, messages(s"supplementary.partyType.$WarehouseKeeper"))-->
 
 RadioItem(
   id = Some(DeclarationType.SIMPLIFIED.toString),
@@ -122,13 +137,9 @@ field = form("eori"),
 labelKey = "supplementary.additionalActors.eori"
 )
 
-@components.details(messages("site.details.summary_text_this")){
-@tariffBody
+@tariffDetails(messages("declaration.type.tariff_summary_text"), HtmlContent(tariffBody))
 }
-@components.add_save_button(addHint = "supplementary.additionalActors.add.hint")
-@components.buttons.save_and_return_later_button()
-}
-@saveAndContinue()
+@saveButtons()
 
 }
 }
