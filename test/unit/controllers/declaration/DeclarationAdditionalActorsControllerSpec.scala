@@ -16,7 +16,7 @@
 
 package unit.controllers.declaration
 
-import base.TestHelper
+import base.{Injector, TestHelper}
 import controllers.declaration.DeclarationAdditionalActorsController
 import controllers.util.Remove
 import forms.common.Eori
@@ -30,10 +30,10 @@ import unit.base.ControllerSpec
 import unit.mock.ErrorHandlerMocks
 import views.html.declaration.declaration_additional_actors
 
-class DeclarationAdditionalActorsControllerSpec extends ControllerSpec with ErrorHandlerMocks {
+class DeclarationAdditionalActorsControllerSpec extends ControllerSpec with ErrorHandlerMocks with Injector {
 
   trait SetUp {
-    val declarationAdditionalActorsPage = new declaration_additional_actors(mainTemplate)
+    val declarationAdditionalActorsPage = instanceOf[declaration_additional_actors]
 
     val controller = new DeclarationAdditionalActorsController(
       mockAuthAction,

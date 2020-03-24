@@ -18,7 +18,7 @@ package views.declaration
 
 import base.{Injector, TestHelper}
 import controllers.declaration.routes
-import controllers.util.SaveAndReturn
+import controllers.util.{Add, SaveAndContinue, SaveAndReturn}
 import forms.common.Eori
 import forms.declaration.DeclarationAdditionalActors
 import helpers.views.declaration.CommonMessages
@@ -38,7 +38,7 @@ import DeclarationType._
 class DeclarationAdditionalActorsViewSpec extends UnitViewSpec with CommonMessages with ExportsTestData with Stubs with Injector {
 
   private val form: Form[DeclarationAdditionalActors] = DeclarationAdditionalActors.form()
-  private val declarationAdditionalActorsPage = new declaration_additional_actors(mainTemplate)
+  private val declarationAdditionalActorsPage = instanceOf[declaration_additional_actors]
 
   private def createView(form: Form[DeclarationAdditionalActors], request: JourneyRequest[_]): Document =
     declarationAdditionalActorsPage(Mode.Normal, form, Seq())(request, messages)
@@ -49,31 +49,31 @@ class DeclarationAdditionalActorsViewSpec extends UnitViewSpec with CommonMessag
 
       val messages = instanceOf[MessagesApi].preferred(journeyRequest())
 
-      messages must haveTranslationFor("supplementary.additionalActors.title")
-      messages must haveTranslationFor("supplementary.additionalActors.title.hint")
-      messages must haveTranslationFor("supplementary.additionalActors.eori")
+      messages must haveTranslationFor("declaration.additionalActors.title")
+      messages must haveTranslationFor("declaration.additionalActors.title.hint")
+      messages must haveTranslationFor("declaration.additionalActors.eori")
       messages must haveTranslationFor("supplementary.additionalActors.eori.isNotDefined")
-      messages must haveTranslationFor("supplementary.additionalActors.partyType")
+      messages must haveTranslationFor("declaration.additionalActors.partyType")
       messages must haveTranslationFor("supplementary.additionalActors.maximumAmount.error")
       messages must haveTranslationFor("supplementary.additionalActors.duplicated.error")
-      messages must haveTranslationFor("supplementary.partyType")
-      messages must haveTranslationFor("supplementary.partyType.CS")
-      messages must haveTranslationFor("supplementary.partyType.MF")
-      messages must haveTranslationFor("supplementary.partyType.FW")
-      messages must haveTranslationFor("supplementary.partyType.WH")
-      messages must haveTranslationFor("supplementary.partyType.empty")
+      messages must haveTranslationFor("declaration.partyType")
+      messages must haveTranslationFor("declaration.partyType.CS")
+      messages must haveTranslationFor("declaration.partyType.MF")
+      messages must haveTranslationFor("declaration.partyType.FW")
+      messages must haveTranslationFor("declaration.partyType.WH")
+      messages must haveTranslationFor("declaration.partyType.empty")
       messages must haveTranslationFor("supplementary.partyType.error")
     }
   }
 
   "Declaration Additional Actors View on empty page" should {
 
-    onJourney(STANDARD, SIMPLIFIED, SUPPLEMENTARY, OCCASIONAL) { request =>
+    onJourney(STANDARD, SIMPLIFIED, OCCASIONAL, SUPPLEMENTARY) { request =>
       val view = createView(form, request)
 
       "display page title" in {
 
-        view.getElementById("title").text() mustBe messages("supplementary.additionalActors.title")
+        view.getElementsByClass("govuk-fieldset__heading").first().text() mustBe messages("declaration.additionalActors.title")
       }
 
       "display section header" in {
@@ -81,51 +81,34 @@ class DeclarationAdditionalActorsViewSpec extends UnitViewSpec with CommonMessag
         view.getElementById("section-header").text() must include(messages("supplementary.summary.parties.header"))
       }
 
-      "display empty input with label for EORI" in {
-
-        view.getElementById("eori-label").text() mustBe messages("supplementary.additionalActors.eori")
-        view.getElementById("eori").attr("value") mustBe empty
-      }
-
-      "display four radio buttons with description (not selected)" in {
+      "display five radio buttons with description (not selected)" in {
 
         val view = createView(DeclarationAdditionalActors.form().fill(DeclarationAdditionalActors(Some(Eori("")), Some(""))), request)
 
-        val optionOne = view.getElementById("supplementary.partyType.CS")
-        optionOne.attr("checked") mustBe empty
+        def checkOption(key: String, messagePrefix: String = "declaration.partyType.") = {
+          val option = view.getElementById(key)
+          option.attr("checked") mustBe empty
+          val optionLabel = view.getElementsByAttributeValueMatching("for", key).first()
+          optionLabel.text() mustBe messages(s"$messagePrefix$key")
+        }
 
-        val optionOneLabel = view.getElementById("supplementary.partyType.CS-label")
-        optionOneLabel.text() mustBe messages("supplementary.partyType.CS")
+        checkOption("CS")
+        checkOption("MF")
+        checkOption("FW")
+        checkOption("WH")
+//        checkOption("no", "site.")
 
-        val optionTwo = view.getElementById("supplementary.partyType.MF")
-        optionTwo.attr("checked") mustBe empty
-
-        val optionTwoLabel = view.getElementById("supplementary.partyType.MF-label")
-        optionTwoLabel.text() mustBe messages("supplementary.partyType.MF")
-
-        val optionThree = view.getElementById("supplementary.partyType.FW")
-        optionThree.attr("checked") mustBe empty
-
-        val optionThreeLabel = view.getElementById("supplementary.partyType.FW-label")
-        optionThreeLabel.text() mustBe messages("supplementary.partyType.FW")
-
-        val optionFour = view.getElementById("supplementary.partyType.WH")
-        optionFour.attr("checked") mustBe empty
-
-        val optionFourLabel = view.getElementById("supplementary.partyType.WH-label")
-        optionFourLabel.text() mustBe messages("supplementary.partyType.WH")
       }
 
       "display both 'Add' and 'Save and continue' button on page" in {
-        val addButton = view.getElementById("add")
-        addButton.text() mustBe "site.add supplementary.additionalActors.add.hint"
+        val addButton = view.getElementsByAttributeValueMatching("name", Add.toString).first()
+        addButton.text() mustBe "site.addsupplementary.additionalActors.add.hint"
 
-        val saveAndContinueButton = view.getElementById("submit")
+        val saveAndContinueButton = view.getElementsByAttributeValueMatching("name", SaveAndContinue.toString).first()
         saveAndContinueButton.text() mustBe messages(saveAndContinueCaption)
 
-        val saveAndReturn = view.getElementById("submit_and_return")
+        val saveAndReturn = view.getElementsByAttributeValueMatching("name", SaveAndReturn.toString).first()
         saveAndReturn.text() mustBe messages(saveAndReturnCaption)
-        saveAndReturn.attr("name") mustBe SaveAndReturn.toString
       }
     }
 
@@ -155,7 +138,7 @@ class DeclarationAdditionalActorsViewSpec extends UnitViewSpec with CommonMessag
 
   "Declaration Additional Actors View with invalid input" must {
 
-    onJourney(STANDARD, SIMPLIFIED, SUPPLEMENTARY, OCCASIONAL) { request =>
+    onJourney(STANDARD, SIMPLIFIED, OCCASIONAL, SUPPLEMENTARY) { request =>
       "display errors when EORI is provided, but is incorrect" in {
 
         val view = createView(
@@ -199,10 +182,10 @@ class DeclarationAdditionalActorsViewSpec extends UnitViewSpec with CommonMessag
           createView(DeclarationAdditionalActors.form().fill(DeclarationAdditionalActors(Some(Eori("GB1234")), Some("CS"))), request)
 
         view.getElementById("eori").attr("value") mustBe "GB1234"
-        view.getElementById("supplementary.partyType.CS").attr("checked") mustBe "checked"
-        view.getElementById("supplementary.partyType.MF").attr("checked") mustBe empty
-        view.getElementById("supplementary.partyType.FW").attr("checked") mustBe empty
-        view.getElementById("supplementary.partyType.WH").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.CS").attr("checked") mustBe "checked"
+        view.getElementById("declaration.partyType.MF").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.FW").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.WH").attr("checked") mustBe empty
       }
 
       "display EORI with MF selected" in {
@@ -211,10 +194,10 @@ class DeclarationAdditionalActorsViewSpec extends UnitViewSpec with CommonMessag
           createView(DeclarationAdditionalActors.form().fill(DeclarationAdditionalActors(Some(Eori("GB1234")), Some("MF"))), request)
 
         view.getElementById("eori").attr("value") mustBe "GB1234"
-        view.getElementById("supplementary.partyType.CS").attr("checked") mustBe empty
-        view.getElementById("supplementary.partyType.MF").attr("checked") mustBe "checked"
-        view.getElementById("supplementary.partyType.FW").attr("checked") mustBe empty
-        view.getElementById("supplementary.partyType.WH").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.CS").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.MF").attr("checked") mustBe "checked"
+        view.getElementById("declaration.partyType.FW").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.WH").attr("checked") mustBe empty
       }
 
       "display EORI with FW selected" in {
@@ -223,10 +206,10 @@ class DeclarationAdditionalActorsViewSpec extends UnitViewSpec with CommonMessag
           createView(DeclarationAdditionalActors.form().fill(DeclarationAdditionalActors(Some(Eori("1234")), Some("FW"))), request)
 
         view.getElementById("eori").attr("value") mustBe "1234"
-        view.getElementById("supplementary.partyType.CS").attr("checked") mustBe empty
-        view.getElementById("supplementary.partyType.MF").attr("checked") mustBe empty
-        view.getElementById("supplementary.partyType.FW").attr("checked") mustBe "checked"
-        view.getElementById("supplementary.partyType.WH").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.CS").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.MF").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.FW").attr("checked") mustBe "checked"
+        view.getElementById("declaration.partyType.WH").attr("checked") mustBe empty
       }
 
       "display EORI with WH selected" in {
@@ -235,10 +218,10 @@ class DeclarationAdditionalActorsViewSpec extends UnitViewSpec with CommonMessag
           createView(DeclarationAdditionalActors.form().fill(DeclarationAdditionalActors(Some(Eori("1234")), Some("WH"))), request)
 
         view.getElementById("eori").attr("value") mustBe "1234"
-        view.getElementById("supplementary.partyType.CS").attr("checked") mustBe empty
-        view.getElementById("supplementary.partyType.MF").attr("checked") mustBe empty
-        view.getElementById("supplementary.partyType.FW").attr("checked") mustBe empty
-        view.getElementById("supplementary.partyType.WH").attr("checked") mustBe "checked"
+        view.getElementById("declaration.partyType.CS").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.MF").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.FW").attr("checked") mustBe empty
+        view.getElementById("declaration.partyType.WH").attr("checked") mustBe "checked"
       }
 
       "display one row with data in table" in {
