@@ -17,22 +17,27 @@
 package forms.declaration
 
 import forms.DeclarationPage
+import forms.Mapping.requiredRadio
 import forms.common.Eori
-import forms.declaration.DeclarationAdditionalActors.PartyType
-import play.api.data.Forms.{optional, text}
-import play.api.data.{Form, Forms}
-import play.api.libs.json.{Format, JsValue, Json, OFormat, Reads}
+import play.api.data.{Form, Forms, Mapping}
+import play.api.libs.json.{Format, JsValue, Json}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.validators.forms.FieldValidator._
 
 case class DeclarationAdditionalActors(eori: Option[Eori], partyType: Option[String]) {
 
+  import DeclarationAdditionalActors._
+
   def isDefined: Boolean = eori.isDefined && partyType.isDefined
 
-  def toJson: JsValue = Json.toJson(this)(DeclarationAdditionalActors.format)
+  def isAllowed: Boolean = partyType.exists(allowedPartyTypes.contains)
+
+  def toJson: JsValue = Json.toJson(this)(format)
 }
 
 object DeclarationAdditionalActors extends DeclarationPage {
+
+  val maxNumberOfActors = 99
 
   def fromJsonString(value: String): Option[DeclarationAdditionalActors] = Json.fromJson(Json.parse(value)).asOpt
 
@@ -43,16 +48,18 @@ object DeclarationAdditionalActors extends DeclarationPage {
 
   val formId = "DeclarationAdditionalActors"
 
-  val mapping = Forms.mapping(
+  val mapping: Mapping[DeclarationAdditionalActors] = Forms.mapping(
     "eoriCS" -> eoriMappingFor(PartyType.Consolidator),
     "eoriMF" -> eoriMappingFor(PartyType.Manufacturer),
     "eoriFW" -> eoriMappingFor(PartyType.FreightForwarder),
     "eoriWH" -> eoriMappingFor(PartyType.WarehouseKeeper),
-    "partyType" -> mandatory(text().verifying("supplementary.partyType.error", isContainedIn(allowedPartyTypes + "no")))
+    "partyType" -> requiredRadio("declaration.partyType.error")
+      .verifying("declaration.partyType.error", isContainedIn(allowedPartyTypes + "no"))
+      .transform[Option[String]](choice => Option(choice), choice => choice.getOrElse(""))
   )(form2Model)(model2Form)
 
-  private def eoriMappingFor(partyType: String) =
-    mandatoryIfEqual("partyType", partyType, Eori.mapping("supplementary"))
+  private def eoriMappingFor(partyType: String): Mapping[Option[Eori]] =
+    mandatoryIfEqual("partyType", partyType, Eori.mapping("declaration"))
 
   private def form2Model: (Option[Eori], Option[Eori], Option[Eori], Option[Eori], Option[String]) => DeclarationAdditionalActors = {
     case (eoriCS, eoriMF, eoriFW, eoriWH, partyType) =>
@@ -71,6 +78,13 @@ object DeclarationAdditionalActors extends DeclarationPage {
   }
 
   def form(): Form[DeclarationAdditionalActors] = Form(mapping)
+
+  def actorsValidator(actor: DeclarationAdditionalActors, actors: Seq[DeclarationAdditionalActors]): Option[Seq[(String, String)]] =
+    (actor, actors) match {
+      case (_, actors) if actors.length >= maxNumberOfActors => Some(Seq(("", "declaration.additionalActors.maximumAmount.error")))
+      case (actor, actors) if actors.contains(actor)         => Some(Seq(("", "declaration.additionalActors.duplicated.error")))
+      case _                                                 => None
+    }
 
   object PartyType {
     val Consolidator = "CS"
