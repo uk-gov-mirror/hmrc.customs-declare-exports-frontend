@@ -21,7 +21,7 @@ import play.api.libs.json.Json
 
 case class DeclarationAdditionalActorsData(actors: Seq[DeclarationAdditionalActors]) {
   def addActor(actor: DeclarationAdditionalActors): DeclarationAdditionalActorsData =
-    copy(if (actor.isAllowed) actors :+ actor else actors)
+    if (actor.isAllowed) DeclarationAdditionalActorsData(actor +: actors) else this
 }
 
 object DeclarationAdditionalActorsData {
