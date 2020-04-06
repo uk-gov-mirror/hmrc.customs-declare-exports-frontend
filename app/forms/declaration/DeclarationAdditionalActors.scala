@@ -17,12 +17,11 @@
 package forms.declaration
 
 import forms.DeclarationPage
-import forms.Mapping.requiredRadio
+import forms.Mapping._
 import forms.common.Eori
 import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json.{Format, JsValue, Json}
 import uk.gov.voa.play.form.ConditionalMappings._
-import utils.validators.forms.FieldValidator._
 
 case class DeclarationAdditionalActors(eori: Option[Eori], partyType: Option[String]) {
 
@@ -51,8 +50,7 @@ object DeclarationAdditionalActors extends DeclarationPage {
     "eoriMF" -> eoriMappingFor(PartyType.Manufacturer),
     "eoriFW" -> eoriMappingFor(PartyType.FreightForwarder),
     "eoriWH" -> eoriMappingFor(PartyType.WarehouseKeeper),
-    "partyType" -> requiredRadio("declaration.partyType.error")
-      .verifying("declaration.partyType.error", isContainedIn(allowedPartyTypes + "no"))
+    "partyType" -> optionalRadio("declaration.partyType.error", allowedPartyTypes.toSeq)
       .transform[Option[String]](choice => Option(choice), choice => choice.getOrElse(""))
   )(form2Model)(model2Form)
 
