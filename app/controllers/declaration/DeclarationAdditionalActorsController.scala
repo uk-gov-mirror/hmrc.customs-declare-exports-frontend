@@ -84,12 +84,12 @@ class DeclarationAdditionalActorsController @Inject()(
         .map(_ => navigator.continueTo(mode, routes.DeclarationAdditionalActorsController.displayPage))
     }
 
-  private def actorsValidator(mode: Mode, actor: DeclarationAdditionalActors, actors: Seq[DeclarationAdditionalActors])(
-    success: Future[Result]
+  private def actorsValidator(mode: Mode, actor: DeclarationAdditionalActors, existingActors: Seq[DeclarationAdditionalActors])(
+    onSuccess: Future[Result]
   )(implicit request: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[Result] =
-    DeclarationAdditionalActors
-      .actorsValidator(actor, actors)
-      .fold[Future[Result]](success)(errors => handleErrorPage(mode, errors, actor, actors))
+    DeclarationAdditionalActorsData
+      .actorsValidator(actor, existingActors)
+      .fold[Future[Result]](onSuccess)(errors => handleErrorPage(mode, errors, actor, existingActors))
 
   private def handleErrorPage(
     mode: Mode,
@@ -122,9 +122,9 @@ class DeclarationAdditionalActorsController @Inject()(
       case (actor, actors) => handleSaveAndContinueCache(mode, actor, actors)
     }
 
-  private def handleSaveAndContinueCache(mode: Mode, actor: DeclarationAdditionalActors, actors: Seq[DeclarationAdditionalActors])(
+  private def handleSaveAndContinueCache(mode: Mode, actor: DeclarationAdditionalActors, existingActors: Seq[DeclarationAdditionalActors])(
     implicit request: JourneyRequest[AnyContent]
-  ): Future[Result] = actorsValidator(mode, actor, actors)(saveAndRedirect(mode, actor, actors))
+  ): Future[Result] = actorsValidator(mode, actor, existingActors)(saveAndRedirect(mode, actor, existingActors))
 
   private def saveAndRedirect(mode: Mode, actor: DeclarationAdditionalActors, actors: Seq[DeclarationAdditionalActors])(
     implicit request: JourneyRequest[AnyContent],

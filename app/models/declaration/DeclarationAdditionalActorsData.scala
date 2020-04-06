@@ -28,6 +28,15 @@ object DeclarationAdditionalActorsData {
 
   implicit val format = Json.format[DeclarationAdditionalActorsData]
 
+  val maxNumberOfActors = 99
+
   val formId = "DeclarationAdditionalActorsData"
+
+  def actorsValidator(actor: DeclarationAdditionalActors, actors: Seq[DeclarationAdditionalActors]): Option[Seq[(String, String)]] =
+    (actor, actors) match {
+      case (_, actors) if actors.length >= maxNumberOfActors => Some(Seq(("", "declaration.additionalActors.maximumAmount.error")))
+      case (actor, actors) if actors.contains(actor)         => Some(Seq(("", "declaration.additionalActors.duplicated.error")))
+      case _                                                 => None
+    }
 
 }

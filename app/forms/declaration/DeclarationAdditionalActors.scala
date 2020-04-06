@@ -37,8 +37,6 @@ case class DeclarationAdditionalActors(eori: Option[Eori], partyType: Option[Str
 
 object DeclarationAdditionalActors extends DeclarationPage {
 
-  val maxNumberOfActors = 99
-
   def fromJsonString(value: String): Option[DeclarationAdditionalActors] = Json.fromJson(Json.parse(value)).asOpt
 
   implicit val format: Format[DeclarationAdditionalActors] = Json.format[DeclarationAdditionalActors]
@@ -78,13 +76,6 @@ object DeclarationAdditionalActors extends DeclarationPage {
   }
 
   def form(): Form[DeclarationAdditionalActors] = Form(mapping)
-
-  def actorsValidator(actor: DeclarationAdditionalActors, actors: Seq[DeclarationAdditionalActors]): Option[Seq[(String, String)]] =
-    (actor, actors) match {
-      case (_, actors) if actors.length >= maxNumberOfActors => Some(Seq(("", "declaration.additionalActors.maximumAmount.error")))
-      case (actor, actors) if actors.contains(actor)         => Some(Seq(("", "declaration.additionalActors.duplicated.error")))
-      case _                                                 => None
-    }
 
   object PartyType {
     val Consolidator = "CS"
