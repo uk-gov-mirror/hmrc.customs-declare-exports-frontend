@@ -40,6 +40,27 @@ class AppConfig @Inject()(
   private def loadConfig(key: String): String =
     runModeConfiguration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
+  private lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
+
+  private lazy val serviceIdentifierGetAnEori =
+    runModeConfiguration.get[String]("microservice.services.contact-frontend.serviceIdentifierGetEori")
+  private lazy val serviceIdentifierGetAccess =
+    runModeConfiguration.get[String]("microservice.services.contact-frontend.serviceIdentifierGetAccess")
+
+  //get help link feedback for Get an EORI
+  val reportAProblemPartialUrlGetAnEori: String =
+    s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifierGetAnEori"
+  val reportAProblemNonJSUrlGetAnEori: String =
+    s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifierGetAnEori"
+
+  //get help link feedback for Get access to CDS
+  val reportAProblemPartialUrlGetAccess: String =
+    s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifierGetAccess"
+  val reportAProblemNonJSUrlGetAccess: String =
+    s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifierGetAccess"
+
+
+
   lazy val analyticsToken = loadConfig(s"google-analytics.token")
   lazy val analyticsHost = loadConfig(s"google-analytics.host")
 

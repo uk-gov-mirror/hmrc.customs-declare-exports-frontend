@@ -15,6 +15,7 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import config.AppConfig
 @import views.BackButton
 @import views.Title
 @import views.html.components.gds.timeoutDialog
@@ -22,6 +23,7 @@
 @import models.requests.AuthenticatedRequest
 @import play.twirl.api.HtmlFormat
 @import scala.collection.immutable.Seq
+@import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 
 @this(
         govukHeader: GovukHeader,
@@ -31,7 +33,9 @@
         govukBackLink: GovukBackLink,
         siteHeader: components.gds.siteHeader,
         phaseBanner: components.gds.phaseBanner,
-        timeoutDialogConfig: TimeoutDialogConfig
+        timeoutDialogConfig: TimeoutDialogConfig,
+        appConfig: AppConfig,
+        reportAProblemLink: ReportAProblemLink
 )
 
 @(
@@ -75,6 +79,10 @@
     }
 }
 
+@getHelpForm = @{
+  reportAProblemLink(appConfig.reportAProblemPartialUrlGetAnEori, appConfig.reportAProblemNonJSUrlGetAnEori)
+}
+
 @content = {
   <div class="govuk-back-link-div">
     @backButton.map(back =>
@@ -87,6 +95,7 @@
     )
   </div>
   @contentBlock
+  @getHelpForm
 }
 
 @footer = @{
