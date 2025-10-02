@@ -42,7 +42,6 @@ class BorderTransportHelper @Inject() (exportsInputText: exportsInputText, trans
     Title(s"$prefix.crossingTheBorder.title", "declaration.section.6", transportMode, hasErrors = hasErrors)
   }
 
-  //HERE
   private def inputField(transportCode: TransportCode, form: Form[_])(implicit messages: Messages): Option[Html] =
     Some(
       exportsInputText(

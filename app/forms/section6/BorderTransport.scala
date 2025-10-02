@@ -51,12 +51,13 @@ object BorderTransport extends DeclarationPage {
       )(form2Model)(model2Form(tcs))
     )
 
+  //HERE
   private def transportReferenceMapping(transportCode: TransportCode): (String, Mapping[Option[String]]) =
     transportCode.id -> mandatoryIfEqual(
       radioButtonGroupId,
       transportCode.value,
       text
-        .verifying(s"$prefix.IDNumber.error.empty", nonEmpty)
+        .verifying(s"$prefix.IDNumber.error.empty", nonEmpty) // REMOVE THIS LINE TO MAKE OPTIONAL
         .verifying(s"$prefix.IDNumber.error.length", isEmpty or noLongerThan(35))
         .verifying(s"$prefix.IDNumber.error.invalid", isAlphanumericWithAllowedSpecialCharacters)
     )

@@ -141,6 +141,7 @@ class Card6ForTransport @Inject() (summaryCard: summary_card, countryHelper: Cou
     else None
   }
 
+  //HERE
   private def activeTransportType(transport: Transport, actionsEnabled: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     transport.meansOfTransportCrossingTheBorderType.flatMap { meansType =>
       transport.meansOfTransportCrossingTheBorderIDNumber.map { meansId =>
@@ -152,6 +153,23 @@ class Card6ForTransport @Inject() (summaryCard: summary_card, countryHelper: Cou
         )
       }
     }
+
+//  private def activeTransportType(transport: Transport, actionsEnabled: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+//    transport.meansOfTransportCrossingTheBorderType.flatMap { meansType =>
+//      val meansIdOpt = transport.meansOfTransportCrossingTheBorderIDNumber.filter(_.nonEmpty)
+//
+//      val value = meansIdOpt match {
+//        case Some(meansId) => s"${messages(s"declaration.summary.transport.border.meansOfTransport.$meansType")}<br>$meansId"
+//        case None => messages(s"declaration.summary.transport.border.meansOfTransport.$meansType")
+//      }
+//
+//      Some(SummaryListRow(
+//        key("transport.border.meansOfTransport.header"),
+//        valueHtml(value),
+//        classes = "active-transport-type",
+//        changeLink(BorderTransportController.displayPage, "transport.border.meansOfTransport.header", actionsEnabled)
+//      ))
+//    }
 
   private def transportPayment(transport: Transport, actionsEnabled: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     transport.transportPayment.map { transportPayment =>
