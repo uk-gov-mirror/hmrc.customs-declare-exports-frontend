@@ -18,7 +18,6 @@ This repository contains unit tests for the service. In order to run them, simpl
 
 `sbt test`
 
-
 ## Developer notes
 
 ### Feature flags
@@ -39,7 +38,6 @@ The service's user interface is always built using the components provided by th
 - The [dashboard/pagination](https://github.com/hmrc/customs-declare-exports-frontend/blob/main/app/views/dashboard/pagination.scala.html) and the [drafts/pagination](https://github.com/hmrc/customs-declare-exports-frontend/blob/main/app/views/drafts/pagination.scala.html)
   Twirl templates were required to support loading a single "page" of documents on demand, as the service, for each of its users, might store an indefinite number of declarations, potentially ten of thousands.  
   However, they generate the same Html, with the same CSS classes, as the Html component sampled at [GDS pagination](https://design-system.service.gov.uk/components/pagination/).
-
 
 ### Scalastyle
 
@@ -64,7 +62,6 @@ sbt:scalafmt::test  # check .sbt sources
 ### Pre-merge check
 There is a script called `precheck.sh` that runs all tests, examine their coverage and check if all the files are properly formatted.
 It is a good practise to run it just before pushing to GitHub. 
-
 
 ### Auto Complete
 

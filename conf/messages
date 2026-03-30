@@ -2738,7 +2738,6 @@ dmsError.CDS12172.title = Relation error
 dmsError.CDS40012.title = Commodity code error
 dmsError.CDS50018.title = Goods Arrival Date/Time is invalid or not included
 
-
 userSignedOut.title = We have saved your answers and signed you out
 
 ead.template.title = Export accompanying document (EAD)
@@ -2819,4 +2818,3 @@ guidance.roro.section.5.paragraph.2 = Goods that entered the UK under import rel
 guidance.roro.section.6.header = Documents as proof of departure
 guidance.roro.section.6.paragraph.1 = As long as your declaration status shows as ‘Cleared’ you can be satisfied that HMRC will assume that your goods have departed.
 guidance.roro.section.6.paragraph.2 = You still need to keep commercial evidence of the export such as boarding tickets, and proof of import. These documents do not need to be provided to NCH for documentary checks but HMRC may ask to see proof of departure.
-
