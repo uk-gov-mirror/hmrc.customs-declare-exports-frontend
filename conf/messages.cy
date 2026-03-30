@@ -1890,6 +1890,7 @@ declaration.summary.noData.header.secondary = Ewch yn ôl a rhowch wybodaeth ang
 declaration.summary.noData.button = Gwnewch ddatganiad allforio
 declaration.summary.draft.ducr = DUCR
 declaration.summary.draft = Adolygwch yr wybodaeth a nodwyd gennych hyd yn hyn.
+declaration.summary.not.provided = Heb ei ddarparu
 declaration.summary.unknown = Anhysbys
 declaration.summary.section = Crynodeb o’ch atebion ar gyfer adran {0}
 
@@ -2817,4 +2818,3 @@ guidance.roro.section.5.paragraph.2 = Gall nwyddau a ddaeth i mewn i’r DU o da
 guidance.roro.section.6.header = Dogfennau fel prawf o ymadael
 guidance.roro.section.6.paragraph.1 = Cyn belled â bod statws eich datganiad yn dangos fel un sydd ‘Wedi’i glirio’, gallwch fod yn fodlon y bydd CThEF yn cymryd bod eich nwyddau wedi ymadael.
 guidance.roro.section.6.paragraph.2 = Mae dal angen i chi gadw tystiolaeth fasnachol o’r allforio megis tocynnau ar gyfer y daith, a phrawf o fewnforio. Nid oes angen darparu’r dogfennau hyn i’r Ganolfan Clirio Genedlaethol ar gyfer gwiriadau dogfennol ond efallai y bydd CThEF yn gofyn am gael gweld prawf o ymadael.
-
