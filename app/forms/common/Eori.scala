@@ -16,6 +16,7 @@
 
 package forms.common
 
+import com.typesafe.config.ConfigFactory
 import models.ExportsFieldPointer.ExportsFieldPointer
 import models.FieldMapping
 import play.api.data.Forms.text
@@ -41,10 +42,14 @@ object Eori extends FieldMapping {
 
     override def reads(json: JsValue): JsResult[Eori] = mappedReads.reads(json)
   }
+  private lazy val euEoriEnabled: Boolean =
+    ConfigFactory.load().hasPath("features.euEori") && ConfigFactory.load().getBoolean("features.euEori")
 
-  def mapping(messageKeyWhenEmpty: String = "declaration.eori.empty"): Mapping[Eori] =
+  def mapping(messageKeyWhenEmpty: String = "declaration.eori.empty"): Mapping[Eori] = {
+    val eoriValidator = if (euEoriEnabled) isValidEoriFlagged else isValidEori
     text()
       .verifying(messageKeyWhenEmpty, nonEmpty)
-      .verifying("declaration.eori.error.format", isEmpty or isValidEori)
+      .verifying("declaration.eori.error.format", isEmpty or eoriValidator)
       .transform(build, _.value)
+  }
 }
