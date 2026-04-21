@@ -36,16 +36,12 @@ object ContainersHelper extends SummaryHelper {
   private def headingOnNoContainers(actionsEnabled: Boolean, maybeGoodsInContainerDeclared: Option[String], appConfig: AppConfig)(
     implicit messages: Messages
   ): SummarySection =
-    SummarySection(if (appConfig.isOptionalFieldsEnabled) {
+    SummarySection({
       maybeGoodsInContainerDeclared.toList.map {
         case "No"              => "site.none"
         case "OptNotToDeclare" => "declaration.transportInformation.summary.containers.optNotToDeclare"
       }.map(messageKey =>
         SummaryListRow(key("containers"), valueKey(messageKey), classes = "heading-on-no-data containers-heading", changeContainer(actionsEnabled))
-      )
-    } else {
-      List(
-        SummaryListRow(key("containers"), valueKey("site.none"), classes = "heading-on-no-data containers-heading", changeContainer(actionsEnabled))
       )
     })
 

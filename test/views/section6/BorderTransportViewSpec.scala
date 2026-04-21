@@ -76,7 +76,6 @@ class BorderTransportViewSpec extends PageWithButtonsSpec with Injector {
 
         "display the expected 'Means of Transport' section" in {
           reset(appConfig)
-          when(appConfig.isOptionalFieldsEnabled).thenReturn(false)
           val view = createView()
 
           transportCodeService.transportCodesOnBorderTransport.foreach { transportCode =>

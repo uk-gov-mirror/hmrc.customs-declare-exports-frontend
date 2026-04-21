@@ -16,7 +16,6 @@
 
 package controllers.section5
 
-import config.AppConfig
 import controllers.actions.{AuthAction, JourneyAction}
 import controllers.general.{ModelCacheable, SubmissionErrors}
 import controllers.helpers.MultipleItemsHelper
@@ -49,7 +48,7 @@ class PackageInformationAddController @Inject() (
   navigator: Navigator,
   mcc: MessagesControllerComponents,
   packageInformationPage: package_information_add
-)(implicit ec: ExecutionContext, packageTypesService: PackageTypesService, auditService: AuditService, appConfig: AppConfig)
+)(implicit ec: ExecutionContext, packageTypesService: PackageTypesService, auditService: AuditService)
     extends FrontendController(mcc) with AutoCompleteFieldBinding with I18nSupport with ModelCacheable with SubmissionErrors
     with WithUnsafeDefaultFormBinding {
 
@@ -58,7 +57,7 @@ class PackageInformationAddController @Inject() (
   }
 
   def submitForm(itemId: String): Action[AnyContent] = (authenticate andThen journeyType).async { implicit request =>
-    val binding = if (request.isType(DeclarationType.SUPPLEMENTARY) && appConfig.isOptionalFieldsEnabled) {
+    val binding = if (request.isType(DeclarationType.SUPPLEMENTARY)) {
       formOptional.bindFromRequest(formValuesFromRequest(typeId))
     } else {
       form.bindFromRequest(formValuesFromRequest(typeId))

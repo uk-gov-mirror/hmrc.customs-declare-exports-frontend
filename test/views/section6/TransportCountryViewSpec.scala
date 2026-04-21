@@ -67,7 +67,6 @@ class TransportCountryViewSpec extends PageWithButtonsSpec with Injector {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    when(appConfig.isOptionalFieldsEnabled).thenReturn(false)
     when(codeListConnector.getCountryCodes(any())).thenReturn(ListMap("ZA" -> Country("South Africa", "ZA")))
   }
 

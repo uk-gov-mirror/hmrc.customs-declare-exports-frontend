@@ -42,14 +42,9 @@ class BorderTransportHelper @Inject() (exportsInputText: exportsInputText, trans
     radioButtons.dropRight(1)
   }
 
-  def radioButtonsOpt(form: Form[BorderTransport])(implicit messages: Messages): List[RadioItem] =
-    if (appConfig.isOptionalFieldsEnabled) {
+  def radioButtonsOpt(form: Form[BorderTransport])(implicit messages: Messages): List[RadioItem] = {
       val radioButtons: List[RadioItem] = transportCodeService.transportCodesOnBorderTransport.map(radioButtonOpt(form, _))
       radioButtons.dropRight(1) :+ RadioItem(divider = Some(messages("site.radio.divider"))) :++ radioButtons.takeRight(1)
-
-    } else {
-      val radioButtons: List[RadioItem] = transportCodeService.transportCodesOnBorderTransport.map(radioButton(form, _))
-      radioButtons.dropRight(1)
     }
 
   def titleInHeadTag(hasErrors: Boolean)(implicit messages: Messages, request: JourneyRequest[_]): Title = {

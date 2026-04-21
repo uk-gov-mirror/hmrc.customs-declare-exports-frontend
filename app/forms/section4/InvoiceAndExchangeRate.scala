@@ -16,7 +16,6 @@
 
 package forms.section4
 
-import config.AppConfig
 import forms.mappings.MappingHelper.optionalRadio
 import forms.common.YesNoAnswer
 import forms.common.YesNoAnswer.YesNoAnswers
@@ -128,7 +127,7 @@ object InvoiceAndExchangeRate extends DeclarationPage {
   override def defineTariffContentKeys(decType: DeclarationType): Seq[TariffContentKey] =
     List(TariffContentKey("tariff.declaration.totalNumbersOfItems.common"))
 
-  private def validateExchangeRate(): AdditionalConstraintsMapping[Option[String]] =
+  private def validateExchangeRate: AdditionalConstraintsMapping[Option[String]] =
       AdditionalConstraintsMapping(
         optional(text()).transform(_.map(_.toUpperCase), (o: Option[String]) => o),
         Seq(

@@ -52,8 +52,6 @@
 
 
 @expanderContent = {
-
-    @if(appConfig.isOptionalFieldsEnabled){
     @paragraphBody(messages("declaration.statisticalValue.guidance.text.1.flag"))
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("declaration.statisticalValue.guidance.bullet.1.flag")</li>
@@ -65,13 +63,7 @@
         <br>
         @messages("declaration.statisticalValue.guidance.text.3.flag")
     </p>
-    }else {
-    @paragraphBody(messages("declaration.statisticalValue.guidance.text.1"))
-    @paragraphBody(messages("declaration.statisticalValue.guidance.text.2"))
-    @paragraphBody(messages("declaration.statisticalValue.guidance.text.3"))
-    @paragraphBody(messages("declaration.statisticalValue.guidance.text.4"))
-    @paragraphBody(messages("declaration.statisticalValue.guidance.text.5"), classes = "govuk-body bold")
-}
+
 }
 
 @govukLayout(
