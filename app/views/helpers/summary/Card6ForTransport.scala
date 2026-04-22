@@ -16,7 +16,6 @@
 
 package views.helpers.summary
 
-import config.AppConfig
 import controllers.section6.routes._
 import controllers.summary.routes.SummaryController
 import forms.section6.ModeOfTransportCode.Empty
@@ -34,7 +33,7 @@ import views.html.summary.summary_card
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class Card6ForTransport @Inject() (summaryCard: summary_card, countryHelper: CountryHelper, appConfig: AppConfig) extends SummaryCard {
+class Card6ForTransport @Inject() (summaryCard: summary_card, countryHelper: CountryHelper) extends SummaryCard {
 
   // Called by the Final CYA page
   def eval(declaration: ExportsDeclaration, actionsEnabled: Boolean = true)(implicit messages: Messages): Html =
@@ -61,12 +60,12 @@ class Card6ForTransport @Inject() (summaryCard: summary_card, countryHelper: Cou
           inlandModeOfTransport(declaration.locations, actionsEnabled),
           transportReference(declaration.transport, actionsEnabled),
           activeTransportType(declaration.transport, actionsEnabled),
-          transportCrossingTheBorder(declaration.transport, actionsEnabled, appConfig),
+          transportCrossingTheBorder(declaration.transport, actionsEnabled),
           expressConsignment(declaration.transport, actionsEnabled),
           transportPayment(declaration.transport, actionsEnabled)
         )
       ),
-      ContainersHelper.maybeSummarySection(declaration.transport, actionsEnabled, appConfig)
+      ContainersHelper.maybeSummarySection(declaration.transport, actionsEnabled)
     ).flatten
 
   private def borderTransport(transport: Transport, actionsEnabled: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
@@ -176,7 +175,7 @@ class Card6ForTransport @Inject() (summaryCard: summary_card, countryHelper: Cou
       )
     }
 
-  private def transportCrossingTheBorder(transport: Transport, actionsEnabled: Boolean, appConfig: AppConfig)(
+  private def transportCrossingTheBorder(transport: Transport, actionsEnabled: Boolean)(
     implicit messages: Messages
   ): Option[SummaryListRow] =
     transport.transportCrossingTheBorderNationality.map { transportCrossingTheBorderNationality => {

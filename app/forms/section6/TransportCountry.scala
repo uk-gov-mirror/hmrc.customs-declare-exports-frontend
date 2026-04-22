@@ -16,14 +16,12 @@
 
 package forms.section6
 
-import config.AppConfig
 import connectors.CodeListConnector
 import forms.DeclarationPage
 import models.DeclarationType.DeclarationType
 import models.viewmodels.TariffContentKey
 import models.{Amendment, FieldMapping}
 import play.api.data.Forms.text
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{Form, Forms, Mapping}
 import play.api.i18n.Messages
 import play.api.libs.json._
@@ -63,11 +61,6 @@ object TransportCountry extends DeclarationPage with FieldMapping {
         transportCountry -> text
           .verifying(s"$prefix.country.error.invalid", input => input.isEmpty or isValidCountryCode(input))
       )(country => TransportCountry(Some(country)))(_.countryCode)
-    }
-
-  private def nonEmptyConstraint(transportMode: String): Constraint[String] =
-    Constraint("constraint.nonEmpty.country") { country =>
-      if (country.trim.nonEmpty) Valid else Invalid(List(ValidationError(s"$prefix.country.error.empty", transportMode)))
     }
 
   override def defineTariffContentKeys(decType: DeclarationType): Seq[TariffContentKey] =

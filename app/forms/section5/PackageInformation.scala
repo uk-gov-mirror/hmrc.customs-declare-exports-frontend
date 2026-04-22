@@ -16,7 +16,6 @@
 
 package forms.section5
 
-import config.AppConfig
 import forms.DeclarationPage
 import forms.section5.PackageInformation.{numberOfPackagesPointer, shippingMarksPointer, typesOfPackagesPointer}
 import models.DeclarationMeta.sequenceIdPlaceholder
@@ -95,7 +94,7 @@ object PackageInformation extends DeclarationPage with FieldMapping {
 
   val typeId = "typesOfPackages"
 
-  def mapping(implicit messages: Messages, packageTypesService: PackageTypesService, appConfig: AppConfig): Mapping[PackageInformation] = {
+  def mapping(implicit messages: Messages, packageTypesService: PackageTypesService): Mapping[PackageInformation] = {
       Forms
         .mapping(
           "numberOfPackages" -> optional(
@@ -132,7 +131,7 @@ object PackageInformation extends DeclarationPage with FieldMapping {
         )
       )(form2Data)(data2Form)
 
-  def form(implicit messages: Messages, packageTypesService: PackageTypesService, appConfig: AppConfig): Form[PackageInformation] = Form(mapping)
+  def form(implicit messages: Messages, packageTypesService: PackageTypesService): Form[PackageInformation] = Form(mapping)
 
   def formOptional(implicit messages: Messages, packageTypesService: PackageTypesService): Form[PackageInformation] = Form(mappingOptional)
 

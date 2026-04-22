@@ -16,7 +16,6 @@
 
 package views.helpers
 
-import config.AppConfig
 import forms.section6.BorderTransport.radioButtonGroupId
 import forms.section6.{BorderTransport, TransportCode}
 import models.requests.JourneyRequest
@@ -31,9 +30,7 @@ import views.html.components.gds.exportsInputText
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class BorderTransportHelper @Inject() (exportsInputText: exportsInputText, transportCodeService: TransportCodeService)(
-  implicit appConfig: AppConfig
-) {
+class BorderTransportHelper @Inject() (exportsInputText: exportsInputText, transportCodeService: TransportCodeService){
 
   private val prefix = "declaration.transportInformation.meansOfTransport"
 

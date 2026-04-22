@@ -16,7 +16,6 @@
 
 package forms.section6
 
-import config.AppConfig
 import forms.DeclarationPage
 import forms.mappings.MappingHelper.requiredRadio
 import play.api.data.Forms.{default, mapping, text}

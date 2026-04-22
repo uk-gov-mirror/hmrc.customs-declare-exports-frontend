@@ -16,7 +16,6 @@
 
 package views.helpers.summary
 
-import config.AppConfig
 import controllers.section6.routes._
 import models.declaration.{Container, Transport}
 import play.api.i18n.Messages
@@ -24,16 +23,16 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryL
 
 object ContainersHelper extends SummaryHelper {
 
-  def maybeSummarySection(transport: Transport, actionsEnabled: Boolean, appConfig: AppConfig)(implicit messages: Messages): Option[SummarySection] =
+  def maybeSummarySection(transport: Transport, actionsEnabled: Boolean)(implicit messages: Messages): Option[SummarySection] =
     transport.containers.map { containers =>
       val summaryListRows = containers.zipWithIndex.flatMap { case (container, index) =>
         List(Some(containerId(container, index + 1, actionsEnabled)), Some(securitySeals(container, index + 1)))
       }.flatten
-      if (summaryListRows.isEmpty) headingOnNoContainers(actionsEnabled, transport.goodsInContainerDeclared, appConfig)
+      if (summaryListRows.isEmpty) headingOnNoContainers(actionsEnabled, transport.goodsInContainerDeclared)
       else SummarySection(summaryListRows, Some(SummarySectionHeading("containers", "container")))
     }
 
-  private def headingOnNoContainers(actionsEnabled: Boolean, maybeGoodsInContainerDeclared: Option[String], appConfig: AppConfig)(
+  private def headingOnNoContainers(actionsEnabled: Boolean, maybeGoodsInContainerDeclared: Option[String])(
     implicit messages: Messages
   ): SummarySection =
     SummarySection({
