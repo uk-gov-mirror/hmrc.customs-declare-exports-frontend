@@ -118,8 +118,6 @@ class TransportCountryViewSpec extends PageWithButtonsSpec with Injector {
 
               "display the expected paragraph FEATURE FLAGGED" when {
                 "'Transport Leaving the Border' is 'RoRo'" in {
-                  reset(appConfig)
-                  when(appConfig.isOptionalFieldsEnabled).thenReturn(true)
                   val view = createView(form(transportMode), transportMode)(journeyRequest(declarationType))
 
                   val body = view.getElementsByClass("govuk-body")
@@ -136,8 +134,6 @@ class TransportCountryViewSpec extends PageWithButtonsSpec with Injector {
 
               "display the expected paragraph" when {
                 "'Transport Leaving the Border' is 'RoRo'" in {
-                  reset(appConfig)
-                  when(appConfig.isOptionalFieldsEnabled).thenReturn(false)
                   val view = createView(form(transportMode), transportMode)(journeyRequest(declarationType))
 
                   val body = view.getElementsByClass("govuk-body")

@@ -18,13 +18,11 @@ package views.section6
 
 import base.Injector
 import base.MockTransportCodeService
-import config.AppConfig
 import controllers.section6.routes.{DepartureTransportController, InlandTransportDetailsController}
 import forms.section6.BorderTransport.form
 import models.DeclarationType._
 import models.requests.JourneyRequest
 import org.jsoup.nodes.Document
-import org.mockito.Mockito.{reset, when}
 import play.api.mvc.AnyContent
 import services.TransportCodeService
 import views.common.PageWithButtonsSpec
@@ -41,8 +39,6 @@ class BorderTransportViewSpec extends PageWithButtonsSpec with Injector {
   val page = instanceOf[border_transport]
 
   override val typeAndViewInstance = (STANDARD, page(form)(_, _))
-
-  implicit val appConfig: AppConfig = mock[AppConfig]
 
   def createView()(implicit request: JourneyRequest[_]): Document = page(form)
 
@@ -75,7 +71,6 @@ class BorderTransportViewSpec extends PageWithButtonsSpec with Injector {
         }
 
         "display the expected 'Means of Transport' section" in {
-          reset(appConfig)
           val view = createView()
 
           transportCodeService.transportCodesOnBorderTransport.foreach { transportCode =>
@@ -104,9 +99,6 @@ class BorderTransportViewSpec extends PageWithButtonsSpec with Injector {
         }
 
         "display the expected 'Means of Transport' section FEATURE FLAGGED" in {
-          reset(appConfig)
-          when(appConfig.isOptionalFieldsEnabled).thenReturn(true)
-
           val view = createView()
 
           transportCodeService.transportCodesOnBorderTransport.foreach { transportCode =>

@@ -16,8 +16,6 @@
 
 package forms.section4
 
-import base.MockTransportCodeService.mock
-import config.AppConfig
 import forms.common.DeclarationPageBaseSpec
 import forms.common.YesNoAnswer.YesNoAnswers
 import forms.section4.InvoiceAndExchangeRate._
@@ -66,8 +64,6 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
   private val validTotalAmountInvoicedOver100k = "100001"
   private val validExchangeRate = "100"
 
-  private val appConfig = mock[AppConfig]
-
   "InvoiceAndExchangeRate" should {
     testTariffContentKeysNoSpecialisation(InvoiceAndExchangeRate, "tariff.declaration.totalNumbersOfItems")
 
@@ -77,35 +73,35 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
         "populated with max whole value" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(exchangeRateWithValidFields(Some("100000000000")))
           form.errors.size mustBe 0
         }
 
         "populated with max decimal value" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(exchangeRateWithValidFields(Some("1000000.12345")))
           form.errors.size mustBe 0
         }
 
         "populated with commas" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(exchangeRateWithValidFields(Some(",,1,0,2,3.12")))
           form.errors.size mustBe 0
         }
 
         "populated with a leading period char" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(exchangeRateWithValidFields(Some(".12")))
           form.errors.size mustBe 0
         }
 
         "populated with a trailing period char" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(exchangeRateWithValidFields(Some("12.")))
           form.errors.size mustBe 0
         }
@@ -116,35 +112,35 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
         "populated with max whole value" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(invoiceAmountWithValidFields(Some("1000000000000000")))
           form.errors.size mustBe 0
         }
 
         "populated with max decimal value" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(invoiceAmountWithValidFields(Some("10000000000000.12")))
           form.errors.size mustBe 0
         }
 
         "populated with commas" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(invoiceAmountWithValidFields(Some(",,1,0,2,333.12")))
           form.errors.size mustBe 0
         }
 
         "populated with a leading period char" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(invoiceAmountWithValidFields(Some(".12")))
           form.errors.size mustBe 1
         }
 
         "populated with a trailing period char" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(invoiceAmountWithValidFields(Some("120000.")))
           form.errors.size mustBe 0
         }
@@ -153,7 +149,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
       "when all form fields are populated" in {
         val form = InvoiceAndExchangeRate
-          .form(appConfig)
+          .form
           .bind(
             formData(
               rate = Some(validExchangeRate),
@@ -169,7 +165,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
     "convert currency of amount invoiced to upper case" when {
       "the user enters a currency in lower case" in {
         val form = InvoiceAndExchangeRate
-          .form(appConfig)
+          .form
           .bind(formData(currency = Some("gbp"), amount = Some(validTotalAmountInvoicedOver100k), rateYesNo = Some(YesNoAnswers.no)))
 
         form.errors mustBe empty
@@ -178,27 +174,24 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
     }
 
     "return errors" when {
+      "form fields are empty" in {
+        val form = InvoiceAndExchangeRate
+          .form
+          .bind(Map(totalAmountInvoiced -> ""))
 
-      if (appConfig.isOptionalFieldsEnabled) {
-
-        "form fields are empty" in {
-          val form = InvoiceAndExchangeRate
-            .form(appConfig)
-            .bind(Map(totalAmountInvoiced -> ""))
-
-          form.errors mustBe Seq(
-            FormError(totalAmountInvoiced, invoiceFieldErrorEmptyKey),
-            FormError(agreedExchangeRateYesNo, exchangeRateNoAnswerErrorKey)
-          )
-        }
+        form.errors mustBe Seq(
+          FormError(totalAmountInvoiced, invoiceFieldErrorEmptyKey),
+          FormError(agreedExchangeRateYesNo, exchangeRateNoAnswerErrorKey)
+        )
       }
+
 
       "exchange rate specified" that {
 
         "contains a char other than a digit, period or comma" in {
           withClue("contains an alpha char") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(
                 formData(
                   rate = Some("12E"),
@@ -212,7 +205,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
           withClue("contains a special char") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(
                 formData(
                   rate = Some("12%"),
@@ -228,7 +221,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
         "contains too many digits" in {
           withClue("More than 12 whole number digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(
                 formData(
                   rate = Some("1234567890123"),
@@ -242,7 +235,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
           withClue("12 whole numbers and 1 decimal digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(
                 formData(
                   rate = Some("1234567890123.1"),
@@ -256,7 +249,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
           withClue("11 whole numbers and 2 decimal digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(
                 formData(
                   rate = Some("1234567890123.12"),
@@ -270,7 +263,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
           withClue("10 whole numbers and 3 decimal digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(
                 formData(
                   rate = Some("1234567890123.123"),
@@ -284,7 +277,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
           withClue("9 whole numbers and 4 decimal digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(
                 formData(
                   rate = Some("1234567890123.1234"),
@@ -298,7 +291,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
           withClue("8 whole numbers and 5 decimal digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(
                 formData(
                   rate = Some("1234567890123.12345"),
@@ -312,7 +305,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
           withClue("more than 5 decimal digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(
                 formData(
                   rate = Some("0.123456"),
@@ -327,7 +320,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
         "contains only commas" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(
               formData(
                 rate = Some(",,,"),
@@ -343,7 +336,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
       "invoice amount specified" that {
         "does not have a currency code populated" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(formData(amount = Some("12"), rateYesNo = Some(YesNoAnswers.no)))
           form.errors mustBe currencyEmptyFormErrors
         }
@@ -351,14 +344,14 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
         "contains a char other than a digit, period or comma" in {
           withClue("contains an alpha char") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(invoiceAmountWithValidFields(Some("12E")))
             form.errors mustBe invoicedFormErrors
           }
 
           withClue("contains a special char") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(invoiceAmountWithValidFields(Some("12%")))
             form.errors mustBe invoicedFormErrors
           }
@@ -367,28 +360,28 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
         "contains too many digits" in {
           withClue("More than 16 whole number digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(invoiceAmountWithValidFields(Some("12345678901234567")))
             form.errors mustBe invoicedFormErrors
           }
 
           withClue("16 whole numbers and 1 decimal digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(invoiceAmountWithValidFields(Some("1234567890123456.1")))
             form.errors mustBe invoicedFormErrors
           }
 
           withClue("15 whole numbers and 2 decimal digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(invoiceAmountWithValidFields(Some("123456789012345.12")))
             form.errors mustBe invoicedFormErrors
           }
 
           withClue("more than 2 decimal digits") {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(invoiceAmountWithValidFields(Some("100000.123")))
             form.errors mustBe invoicedFormErrors
           }
@@ -396,7 +389,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
 
         "contains only commas" in {
           val form = InvoiceAndExchangeRate
-            .form(appConfig)
+            .form
             .bind(invoiceAmountWithValidFields(Some(",,,")))
           form.errors mustBe invoicedFormErrors
         }
@@ -408,14 +401,14 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
           "amount invoiced is less than 100,000" when {
             "all numeric" in {
               val form = InvoiceAndExchangeRate
-                .form(appConfig)
+                .form
                 .bind(formData(amount = Some("100"), currency = Some("GBP"), rate = Some("12"), rateYesNo = Some(YesNoAnswers.yes)))
               form.errors mustBe Seq(FormError(totalAmountInvoiced, invoiceFieldErrorLessThan100000Key))
             }
 
             "commas" in {
               val form = InvoiceAndExchangeRate
-                .form(appConfig)
+                .form
                 .bind(formData(amount = Some("10,000"), currency = Some("GBP"), rate = Some("10"), rateYesNo = Some(YesNoAnswers.yes)))
               form.errors mustBe Seq(FormError(totalAmountInvoiced, invoiceFieldErrorLessThan100000Key))
             }
@@ -423,14 +416,14 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
             "decimals" when {
               "decimal in number" in {
                 val form = InvoiceAndExchangeRate
-                  .form(appConfig)
+                  .form
                   .bind(formData(amount = Some("10.00"), currency = Some("GBP"), rate = Some("10"), rateYesNo = Some(YesNoAnswers.yes)))
                 form.errors mustBe Seq(FormError(totalAmountInvoiced, invoiceFieldErrorLessThan100000Key))
               }
 
               "starts with decimal" in {
                 val form = InvoiceAndExchangeRate
-                  .form(appConfig)
+                  .form
                   .bind(formData(amount = Some(".10"), currency = Some("GBP"), rate = Some("10"), rateYesNo = Some(YesNoAnswers.yes)))
                 form.errors mustBe Seq(FormError(totalAmountInvoiced, invoiceFieldErrorLessThan100000Key))
               }
@@ -442,14 +435,14 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
           "reject codes that are not three char in length" in {
             withClue("less than three chars") {
               val form = InvoiceAndExchangeRate
-                .form(appConfig)
+                .form
                 .bind(formData(amount = Some("12"), currency = Some("GB"), rateYesNo = Some(YesNoAnswers.no)))
               form.errors mustBe currencyInvalidWithoutExchangeRateFormErrors
             }
 
             withClue("more than three chars") {
               val form = InvoiceAndExchangeRate
-                .form(appConfig)
+                .form
                 .bind(formData(amount = Some("12"), currency = Some("GBPP"), rateYesNo = Some(YesNoAnswers.no)))
               form.errors mustBe currencyInvalidWithoutExchangeRateFormErrors
             }
@@ -459,7 +452,7 @@ class InvoiceAndExchangeRateSpec extends DeclarationPageBaseSpec {
         "has an exchange rate specified also" should {
           "not accept any value other than GBP" in {
             val form = InvoiceAndExchangeRate
-              .form(appConfig)
+              .form
               .bind(formData(rate = Some("12"), amount = Some("12"), currency = Some("USD"), rateYesNo = Some(YesNoAnswers.yes)))
 
             form.errors mustBe currencyInvalidWithExchangeRateFormErrors

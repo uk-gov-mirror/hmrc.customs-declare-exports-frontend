@@ -149,7 +149,6 @@ class StatisticalValueViewSpec extends PageWithButtonsSpec with Injector {
     }
 
     "display the expected guidance expander FEATURE FLAGGED" in {
-      when(appConfig.isOptionalFieldsEnabled).thenReturn(true)
       val view: Document = createView()
 
       val expander = view.getElementsByClass("govuk-details").first
